@@ -2,6 +2,7 @@
 
 
 
+mod filereader;
 mod daythree;
 mod dayone;
 mod dayfour;

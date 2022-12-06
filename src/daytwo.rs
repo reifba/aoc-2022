@@ -1,6 +1,6 @@
-use std::{cmp::Ordering, fs};
+use std::cmp::Ordering;
 
-const PATH_2: &str = "/Users/Barak/Documents/aoc/input2.txt";
+use crate::filereader;
 
 #[derive(PartialEq)]
 enum Hand {
@@ -94,11 +94,9 @@ impl GameResult {
 }
 
 fn parse_file() -> Vec<(String, String)> {
-    let contents = fs::read_to_string(PATH_2).expect("Should have been able to read the file");
-
     let mut vec: Vec<_> = Vec::new();
 
-    for line in contents.lines() {
+    for line in filereader::lines(2) {
         if line.is_empty() {
             continue;
         }

@@ -1,15 +1,16 @@
-use std::{cmp::Reverse, fs};
+use std::{cmp::Reverse};
 
-pub const PATH_1: &str = "/Users/Barak/Documents/aoc/input.txt";
+use crate::filereader;
+
+//pub const PATH_1: &str = "/Users/Barak/Documents/aoc/input.txt";
 
 fn bins() -> Vec<u32> {
-    let contents = fs::read_to_string(PATH_1).expect("Should have been able to read the file");
 
     let mut vec: Vec<u32> = Vec::new();
 
     let mut acc: u32 = 0;
 
-    for line in contents.lines() {
+    for line in filereader::lines(1) {
         if line.is_empty() {
             vec.push(acc);
             acc = 0;

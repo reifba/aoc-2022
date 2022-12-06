@@ -1,6 +1,4 @@
-use std::fs;
-
-pub const PATH_5: &str = "/Users/Barak/Documents/aoc/input5.txt";
+use crate::filereader;
 
 fn pile_to_column(i: usize) -> usize {
     if !(1..=9).contains(&i) {
@@ -45,14 +43,13 @@ impl FileInput {
     }
 
     fn from_file() -> FileInput {
-        let input = fs::read_to_string(PATH_5).expect("Error reading file");
+        let input = filereader::lines(5);
 
-        let mut cargo_lines: Vec<&str> = Vec::new();
-        let mut moves: Vec<&str> = Vec::new();
+        let mut cargo_lines: Vec<String> = Vec::new();
+        let mut moves: Vec<String> = Vec::new();
+        let mut column_line: String= String::new();
 
-        let mut column_line: &str = "";
-
-        for line in input.lines() {
+        for line in input {
             if line.is_empty() {
                 continue;
             } else if line.starts_with(' ') {

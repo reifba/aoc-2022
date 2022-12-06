@@ -1,13 +1,13 @@
-use std::fs;
-
-const PATH: &str = "/Users/Barak/Documents/aoc/input6.txt";
+use crate::filereader;
 
 fn parse_file() -> Vec<char> {
-    let contents = fs::read_to_string(PATH).expect("Should have been able to read the file");
+    let input = filereader::lines(6);
 
-    let line = contents.lines().next().unwrap();
+    let line = input.first().unwrap();
 
-    line.chars().collect()
+    let s = line.clone();
+
+    s.chars().collect()
 }
 
 fn four_are_unique(a: char, b: char, c: char, d: char) -> bool {
