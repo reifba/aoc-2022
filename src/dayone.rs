@@ -1,11 +1,10 @@
-use std::{cmp::Reverse};
+use std::cmp::Reverse;
 
 use crate::filereader;
 
 //pub const PATH_1: &str = "/Users/Barak/Documents/aoc/input.txt";
 
 fn bins() -> Vec<u32> {
-
     let mut vec: Vec<u32> = Vec::new();
 
     let mut acc: u32 = 0;

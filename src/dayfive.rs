@@ -39,7 +39,6 @@ impl FileInput {
             .map(|x| x.last().unwrap())
             .cloned()
             .collect::<String>()
-
     }
 
     fn from_file() -> FileInput {
@@ -47,7 +46,7 @@ impl FileInput {
 
         let mut cargo_lines: Vec<String> = Vec::new();
         let mut moves: Vec<String> = Vec::new();
-        let mut column_line: String= String::new();
+        let mut column_line: String = String::new();
 
         for line in input {
             if line.is_empty() {
@@ -76,7 +75,6 @@ impl FileInput {
 
         for lines in cargo_lines.iter().rev() {
             let char_vec: Vec<char> = lines.chars().collect();
-            
 
             for i in 1..=max {
                 let column = pile_to_column(i);

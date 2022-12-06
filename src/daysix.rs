@@ -10,24 +10,24 @@ fn parse_file() -> Vec<char> {
     s.chars().collect()
 }
 
-fn four_are_unique(a: char, b: char, c: char, d: char) -> bool {
-    a != b && a != c && a != d && b != c && b != d && c != d
-}
-
-pub fn day_6_1() -> usize {
-    let vec = parse_file();
-
-    for (i, c) in vec.windows(4).enumerate() {
-        if four_are_unique(c[0], c[1], c[2], c[3]) {
-            return i + 4;
+fn unique_n2(chars: &[char]) -> bool {
+    for i in 0..chars.len() {
+        for j in (i + 1)..chars.len() {
+            if chars[i] == chars[j] {
+                return false;
+            }
         }
     }
 
-    panic!("Should have found a match")
+    true
 }
 
-fn fourteen_are_unique(chars: &[char]) -> bool {
-    let mut set = std::collections::HashSet::new();
+fn is_unique(chars: &[char]) -> bool {
+    if chars.len() <= 10 {
+        return unique_n2(chars);
+    }
+
+    let mut set = std::collections::HashSet::with_capacity(chars.len() + 1);
 
     for c in chars {
         if set.contains(c) {
@@ -40,12 +40,12 @@ fn fourteen_are_unique(chars: &[char]) -> bool {
     true
 }
 
-pub fn day_6_2() -> usize {
+pub fn day_6(size: usize) -> usize {
     let vec = parse_file();
 
-    for (i, c) in vec.windows(14).enumerate() {
-        if fourteen_are_unique(c) {
-            return i + 14;
+    for (i, c) in vec.windows(size).enumerate() {
+        if is_unique(c) {
+            return i + size;
         }
     }
 
