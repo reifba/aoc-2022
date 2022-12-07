@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::filereader;
 
 fn parse_file() -> Vec<char> {
@@ -27,7 +29,7 @@ fn is_unique(chars: &[char]) -> bool {
         return unique_n2(chars);
     }
 
-    let mut set = std::collections::HashSet::with_capacity(chars.len() + 1);
+    let mut set = HashSet::with_capacity(chars.len() + 1);
 
     for c in chars {
         if set.contains(c) {

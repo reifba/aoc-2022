@@ -4,11 +4,13 @@ mod dayone;
 mod daysix;
 mod daythree;
 mod daytwo;
+mod dayseven;
+
 mod filereader;
 
 fn main() {
-    dbg!(dayone::day_1_1());
-    dbg!(dayone::day_1_2());
+    dbg!(dayone::day_1(1));
+    dbg!(dayone::day_1(3));
 
     dbg!(daytwo::day_2_1());
     dbg!(daytwo::day_2_2());
@@ -24,4 +26,7 @@ fn main() {
 
     dbg!(daysix::day_6(4));
     dbg!(daysix::day_6(14));
+
+    dbg!(dayseven::day_7_1());
+    dbg!(dayseven::day_7_2());
 }
