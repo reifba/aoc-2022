@@ -1,17 +1,16 @@
-use std::{collections::HashMap, iter::Iterator};
 
 use crate::filereader;
 
 enum Entry {
     File { size: u32 },
-    Dir { entries: HashMap<String, Entry> },
+    Dir { entries: Vec<Entry> },
 }
 
 impl Entry {
     fn nested_size(&self) -> u32 {
         match self {
             Entry::File { size, .. } => *size,
-            Entry::Dir { entries, .. } => entries.values().map(|e| e.nested_size()).sum::<u32>(),
+            Entry::Dir { entries, .. } => entries.iter().map(|e| e.nested_size()).sum::<u32>(),
         }
     }
 
@@ -20,7 +19,7 @@ impl Entry {
             Entry::File { .. } => vec![self],
             Entry::Dir { entries, .. } => {
                 let mut vec = vec![self];
-                for e in entries.values() {
+                for e in entries {
                     vec.extend(e.flatten());
                 }
                 vec
@@ -30,7 +29,7 @@ impl Entry {
 }
 
 fn process(v: &Vec<String>, start_index: usize) -> (Entry, usize) {
-    let mut map: HashMap<String, Entry> = HashMap::new();
+    let mut map: Vec<Entry> = Vec::new();
 
     let mut i = start_index;
 
@@ -43,15 +42,12 @@ fn process(v: &Vec<String>, start_index: usize) -> (Entry, usize) {
         } else if line.trim() == "$ cd .." {
             break;
         } else if line.starts_with("$ cd") {
-            let name_ = line.split_whitespace().nth(2).unwrap();
             let (entry_, j) = process(v, i); // rec happens here
-            map.insert(name_.to_owned(), entry_);
+            map.push(entry_);
             i = j;
         } else {
-            let mut split = line.split_whitespace();
-            let size = split.next().unwrap().parse::<u32>().unwrap();
-            let name_ = split.next().unwrap();
-            map.insert(name_.to_owned(), Entry::File { size });
+            let size = line.split_whitespace().next().unwrap().parse::<u32>().unwrap();
+            map.push(Entry::File { size });
         }
     }
 
