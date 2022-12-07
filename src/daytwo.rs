@@ -93,7 +93,7 @@ impl GameResult {
     }
 }
 
-fn parse_file() -> Vec<(String, String)> {
+fn parse_file() -> Vec<(Hand, String)> {
     let mut vec: Vec<_> = Vec::new();
 
     for line in filereader::lines(2) {
@@ -102,7 +102,7 @@ fn parse_file() -> Vec<(String, String)> {
         }
         let mut split = line.split_whitespace();
 
-        let col1 = split.next().unwrap().to_owned();
+        let col1 = Hand::from_string(split.next().unwrap());
         let col2 = split.next().unwrap().to_owned();
 
         vec.push((col1, col2));
@@ -115,10 +115,9 @@ pub fn day_2_1() -> u32 {
     parse_file()
         .iter()
         .map(|(hand1, hand2)| {
-            let hand1 = Hand::from_string(hand1);
             let hand2 = Hand::from_string(hand2);
 
-            let result = GameResult::play(&hand1, &hand2);
+            let result = GameResult::play(hand1, &hand2);
 
             result.points() + hand2.points()
         })
@@ -129,16 +128,15 @@ pub fn day_2_2() -> u32 {
     parse_file()
         .iter()
         .map(|(hand1, res)| {
-            let hand1 = Hand::from_string(hand1);
             let res = GameResult::from_string(res);
 
-            let hand2 = match res {
-                GameResult::Win => hand1.winner(),
-                GameResult::Lose => hand1.loser(),
-                GameResult::Draw => hand1,
+            let p = match res {
+                GameResult::Win => hand1.winner().points(),
+                GameResult::Lose => hand1.loser().points(),
+                GameResult::Draw => hand1.points(),
             };
 
-            hand2.points() + res.points()
+            p + res.points()
         })
         .sum::<u32>()
 }

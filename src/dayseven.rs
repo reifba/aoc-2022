@@ -1,4 +1,3 @@
-
 use crate::filereader;
 
 enum Entry {
@@ -34,19 +33,24 @@ fn process(v: &Vec<String>, start_index: usize) -> (Entry, usize) {
     let mut i = start_index;
 
     while i < v.len() {
-        let line = v[i].clone();
+        let line = v[i].trim();
         i += 1;
 
-        if line.trim().is_empty() || line.trim() == "$ ls" || line.trim().starts_with("dir") {
+        if line.is_empty() || line == "$ ls" || line.starts_with("dir") {
             continue;
-        } else if line.trim() == "$ cd .." {
+        } else if line == "$ cd .." {
             break;
         } else if line.starts_with("$ cd") {
             let (entry_, j) = process(v, i); // rec happens here
             map.push(entry_);
             i = j;
         } else {
-            let size = line.split_whitespace().next().unwrap().parse::<u32>().unwrap();
+            let size = line
+                .split_whitespace()
+                .next()
+                .unwrap()
+                .parse::<u32>()
+                .unwrap();
             map.push(Entry::File { size });
         }
     }
@@ -57,11 +61,10 @@ fn process(v: &Vec<String>, start_index: usize) -> (Entry, usize) {
 pub fn day_7_1() -> u32 {
     let input = filereader::lines(7);
 
-    let e = process(&input, 0);
+    let (entries, _) = process(&input, 0);
 
-    let flat_list = e.0.flatten();
-
-    flat_list
+    entries
+        .flatten()
         .iter()
         .filter(|x| match x {
             Entry::File { size: _ } => false,
@@ -72,20 +75,20 @@ pub fn day_7_1() -> u32 {
         .sum::<u32>()
 }
 
-pub fn day_7_2() -> u32 {
-    let disk_size: u32 = 70000000;
-    let need_free: u32 = 30000000;
+const DISK_SIZE: u32 = 70000000;
+const NEEDED_FREE: u32 = 30000000;
 
+pub fn day_7_2() -> u32 {
     let input = filereader::lines(7);
 
-    let e = process(&input, 0);
+    let (entries, _) = process(&input, 0);
 
-    let flat_list = e.0.flatten();
+    let flat_list = entries.flatten();
 
     let current_size = flat_list.iter().map(|x| x.nested_size()).max().unwrap();
 
-    let current_free = disk_size - current_size;
-    let need_to_free = need_free - current_free;
+    let current_free = DISK_SIZE - current_size;
+    let need_to_free = NEEDED_FREE - current_free;
 
     flat_list
         .iter()
@@ -94,7 +97,7 @@ pub fn day_7_2() -> u32 {
             Entry::Dir { entries: _ } => true,
         })
         .map(|x| x.nested_size())
-        .filter(|x| *x > need_to_free)
+        .filter(|x| *x >= need_to_free)
         .min()
         .unwrap()
 }

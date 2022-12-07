@@ -1,10 +1,10 @@
 mod dayfive;
 mod dayfour;
 mod dayone;
+mod dayseven;
 mod daysix;
 mod daythree;
 mod daytwo;
-mod dayseven;
 
 mod filereader;
 

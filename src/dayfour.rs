@@ -1,38 +1,41 @@
 use crate::filereader;
 
+#[inline(always)]
 fn is_left_in_right(a: u32, b: u32, x: u32, y: u32) -> bool {
     (x..=y).contains(&a) && (x..=y).contains(&b)
 }
 
+#[inline(always)]
 fn _any_overlap(a: u32, b: u32, x: u32, y: u32) -> bool {
     (x..=y).contains(&a) || (x..=y).contains(&b)
 }
 
-fn any_overlaps(a: u32, b: u32, x: u32, y: u32) -> bool {
+#[inline(always)]
+fn any_overlaps(arr: &[u32; 4]) -> bool {
+    let (a, b, x, y) = (arr[0], arr[1], arr[2], arr[3]);
     _any_overlap(a, b, x, y) || _any_overlap(x, y, a, b)
 }
 
-fn exact_overlaps(a: u32, b: u32, x: u32, y: u32) -> bool {
-    is_left_in_right(a, b, x, y) || is_left_in_right(x, y, a, b)
+#[inline(always)]
+fn exact_overlaps(arr: &[u32; 4]) -> bool {
+    is_left_in_right(arr[0], arr[1], arr[2], arr[3])
+        || is_left_in_right(arr[2], arr[3], arr[0], arr[1])
 }
 
-fn parse_line(s: &String) -> (u32, u32, u32, u32) {
-    let mut iter = s.split(',');
-    let mut iter2 = iter.next().unwrap().split('-');
-    let a = iter2.next().unwrap().parse::<u32>().unwrap();
-    let b = iter2.next().unwrap().parse::<u32>().unwrap();
-    let mut iter3 = iter.next().unwrap().split('-');
-    let x = iter3.next().unwrap().parse::<u32>().unwrap();
-    let y = iter3.next().unwrap().parse::<u32>().unwrap();
-    (a, b, x, y)
+fn parse_line(s: &str) -> [u32; 4] {
+    let v2: Vec<u32> = s
+        .split(&[',', '-'])
+        .map(|x| x.parse::<u32>().unwrap())
+        .collect();
+    [v2[0], v2[1], v2[2], v2[3]]
 }
 
 pub fn day_4_1() -> usize {
     filereader::lines(4)
         .iter()
         .filter(|x| !x.is_empty())
-        .map(parse_line)
-        .filter(|(a, b, x, y)| exact_overlaps(*a, *b, *x, *y))
+        .map(|x| parse_line(x))
+        .filter(exact_overlaps)
         .count()
 }
 
@@ -40,7 +43,7 @@ pub fn day_4_2() -> usize {
     filereader::lines(4)
         .iter()
         .filter(|x| !x.is_empty())
-        .map(parse_line)
-        .filter(|(a, b, x, y)| any_overlaps(*a, *b, *x, *y))
+        .map(|x| parse_line(x))
+        .filter(any_overlaps)
         .count()
 }

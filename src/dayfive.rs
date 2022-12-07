@@ -76,11 +76,10 @@ impl FileInput {
         for lines in cargo_lines.iter().rev() {
             let char_vec: Vec<char> = lines.chars().collect();
 
-            for i in 1..=max {
-                let column = pile_to_column(i);
-                let c = char_vec[column];
+            for (i, pile) in cargo.iter_mut().enumerate().take(max + 1).skip(1) {
+                let c = char_vec[pile_to_column(i)];
                 if c != ' ' {
-                    cargo[i].push(c);
+                    pile.push(c);
                 }
             }
         }
