@@ -36,8 +36,8 @@ fn main() {
     dbg!(dayeight::day_8_1());
     dbg!(dayeight::day_8_2());
 
-    dbg!(daynine::day_9_1(1));
-    dbg!(daynine::day_9_1(9));
+    dbg!(daynine::day_9(1));
+    dbg!(daynine::day_9(9));
 
 
 

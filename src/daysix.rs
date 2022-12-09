@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 
 use crate::filereader;
 
@@ -12,34 +11,14 @@ fn parse_file() -> Vec<char> {
     s.chars().collect()
 }
 
-fn unique_n2(chars: &[char]) -> bool {
-    for i in 0..chars.len() {
-        for j in (i + 1)..chars.len() {
-            if chars[i] == chars[j] {
-                return false;
-            }
-        }
-    }
-
-    true
-}
 
 fn is_unique(chars: &[char]) -> bool {
-    if chars.len() <= 10 {
-        return unique_n2(chars);
-    }
 
-    let mut set = HashSet::with_capacity(chars.len() + 1);
+    let mut vc = chars.to_vec();
+    vc.sort();
+    vc.dedup();
 
-    for c in chars {
-        if set.contains(c) {
-            return false;
-        } else {
-            set.insert(c);
-        }
-    }
-
-    true
+    vc.len() == chars.len()
 }
 
 pub fn day_6(size: usize) -> usize {

@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use crate::filereader;
 
 #[derive(Hash, PartialEq, Eq, Clone, Copy)]
@@ -30,7 +28,7 @@ impl Move {
     }
 }
 
-#[derive(Hash, PartialEq, Eq, Clone, Copy)]
+#[derive(Hash, PartialEq, Eq, Clone, Copy, PartialOrd, Ord)]
 struct Location {
     x: i32,
     y: i32,
@@ -56,38 +54,27 @@ impl Location {
         new_location
     }
 
-    fn are_touching(&self, other: &Location) -> bool {
-        let (x, y) = self.delta(other);
-        x.abs() <=1 && y.abs() <= 1
-    }
-
+    #[inline(always)]
     fn delta(&self, other: &Location) -> (i32, i32) {
         (self.x - other.x, self.y - other.y)
     }
 }
 
-fn get_next_tail_location(head: &Location, tail: &Location) -> Option<Location> {
-    if head.are_touching(tail) {
-        return None;
-    }
+fn get_trailing_knot_location(head: &Location, tail: &Location) -> Option<Location> {
+    let (mut x, mut y) = head.delta(tail);
 
-    if head.x != tail.x && head.y != tail.y {
-        //make diagonal move
-        let (mut x, mut y) = head.delta(tail);
-        x /= x.abs();
-        y /= y.abs();
-        Some(Location {
-            x: tail.x + x,
-            y: tail.y + y,
-        })
+    let (x_abs, y_abs) = (x.abs(), y.abs());
+
+    if x_abs <= 1 && y_abs <= 1 {
+        None
     } else {
-        //make horizontal or vertical move
-        let (mut x, mut y) = head.delta(tail);
         if x != 0 {
-            x /= x.abs();
-        } else {
-            y /= y.abs();
+            x /= x_abs;
         }
+        if y != 0 {
+            y /= y_abs;
+        }
+
         Some(Location {
             x: tail.x + x,
             y: tail.y + y,
@@ -116,12 +103,13 @@ fn moves(s: &[String]) -> Vec<Move> {
         .collect()
 }
 
-fn get_following_knot_locations(head_locations: Vec<Location> ) -> Vec<Location> {
+fn get_following_knot_locations(head_locations: Vec<Location>) -> Vec<Location> {
     let mut tail_locations: Vec<Location> = Vec::new();
     tail_locations.push(*head_locations.first().unwrap());
 
-    for h in head_locations {
-        let new_tail = get_next_tail_location(&h, tail_locations.last().unwrap());
+    for head in head_locations.iter().skip(1) {
+        let tail = tail_locations.last().unwrap();
+        let new_tail = get_trailing_knot_location(head, tail);
         if let Some(tail) = new_tail {
             tail_locations.push(tail);
         }
@@ -130,14 +118,11 @@ fn get_following_knot_locations(head_locations: Vec<Location> ) -> Vec<Location>
     tail_locations
 }
 
-pub fn day_9_1(knots: usize) -> usize {
-    let moves = moves(&filereader::lines(9));
-
+fn get_head_locations(moves: &[Move]) -> Vec<Location> {
     let mut head_locations: Vec<Location> = Vec::new();
     let start = Location::new();
 
     head_locations.push(start);
-
 
     for m in moves {
         for single_step in m.break_into_single_steps() {
@@ -146,25 +131,19 @@ pub fn day_9_1(knots: usize) -> usize {
             head_locations.push(new_location);
         }
     }
-
-    let mut tail_locations: Vec<Location> = get_following_knot_locations(head_locations);
-    
-    for _ in 0..(knots-1) {
-        tail_locations = get_following_knot_locations(tail_locations);
-
-    }
-    // tail_locations.push(start);
-
-    // for h in head_locations {
-    //     let new_tail = get_next_tail_location(&h, tail_locations.last().unwrap());
-    //     if let Some(tail) = new_tail {
-    //         tail_locations.push(tail.clone());
-    //     }
-    // }
-
-    let h: HashSet<Location> = HashSet::from_iter(tail_locations);
-
-    h.len()
+    head_locations
 }
 
+pub fn day_9(knots: usize) -> usize {
+    let moves = moves(&filereader::lines(9));
 
+    let mut knot_locations = get_head_locations(&moves);
+
+    for _ in 0..knots {
+        knot_locations = get_following_knot_locations(knot_locations);
+    }
+
+    knot_locations.sort();
+    knot_locations.dedup();
+    knot_locations.len()
+}

@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use crate::filereader;
 
 const MIN_CHAR: char = '/';
@@ -36,24 +34,30 @@ pub fn day_8_1() -> usize {
 
     let columns = forest[0].len();
 
-    let mut set: HashSet<(usize, usize)> = HashSet::new();
+    let mut set: Vec<(usize, usize)> = Vec::new();
 
     for (row, tree_line) in forest.iter().enumerate() {
         let visable_indices = visable_tree_indices(tree_line);
 
         for column in visable_indices {
-            set.insert((row, column));
+            set.push((row, column));
         }
     }
+
+    set.sort();
+    set.dedup();
 
     for column in 0..columns {
         let tree_line = get_column_from_matrix(&forest, column);
         let visable_indices = visable_tree_indices(&tree_line);
 
         for row in visable_indices {
-            set.insert((row, column));
+            set.push((row, column));
         }
     }
+
+    set.sort();
+    set.dedup();
 
     set.len()
 }
@@ -78,13 +82,12 @@ fn brute_force_scenic_score(
     let max_up = row + 1;
     let max_down = rows - row;
 
-
     if max_right * max_left * max_down * max_up < max_so_far {
         return 0;
     }
 
     let right = {
-        let mut counter: usize=0;
+        let mut counter: usize = 0;
         for i in (column + 1)..columns {
             counter += 1;
             if forest[row][i] >= tree_height {
@@ -93,7 +96,6 @@ fn brute_force_scenic_score(
         }
         counter
     };
-
 
     if right * max_left * max_down * max_up < max_so_far {
         return 0;
