@@ -40,18 +40,16 @@ impl Location {
     }
 
     fn new_location(&self, m: &Move) -> Location {
-        let mut new_location = Location::new();
-        new_location.x = self.x;
-        new_location.y = self.y;
+        let (mut x, mut y) = (self.x, self.y);
 
         match m.direction {
-            Direction::Up => new_location.y += m.distance,
-            Direction::Down => new_location.y -= m.distance,
-            Direction::Left => new_location.x -= m.distance,
-            Direction::Right => new_location.x += m.distance,
+            Direction::Up => y += m.distance,
+            Direction::Down => y -= m.distance,
+            Direction::Left => x -= m.distance,
+            Direction::Right => x += m.distance,
         }
 
-        new_location
+        Location { x, y }
     }
 
     #[inline(always)]
