@@ -1,5 +1,3 @@
-use std::cmp::Ordering;
-
 use crate::filereader;
 
 #[derive(PartialEq)]
@@ -9,19 +7,19 @@ enum Hand {
     Scissors,
 }
 
-impl PartialOrd for Hand {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        match (self, other) {
-            (Hand::Rock, Hand::Paper) => Some(Ordering::Less),
-            (Hand::Rock, Hand::Scissors) => Some(Ordering::Greater),
-            (Hand::Paper, Hand::Rock) => Some(Ordering::Greater),
-            (Hand::Paper, Hand::Scissors) => Some(Ordering::Less),
-            (Hand::Scissors, Hand::Rock) => Some(Ordering::Less),
-            (Hand::Scissors, Hand::Paper) => Some(Ordering::Greater),
-            _ => Some(Ordering::Equal),
-        }
-    }
-}
+// impl PartialOrd for Hand {
+//     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+//         match (self, other) {
+//             (Hand::Rock, Hand::Paper) => Some(Ordering::Less),
+//             (Hand::Rock, Hand::Scissors) => Some(Ordering::Greater),
+//             (Hand::Paper, Hand::Rock) => Some(Ordering::Greater),
+//             (Hand::Paper, Hand::Scissors) => Some(Ordering::Less),
+//             (Hand::Scissors, Hand::Rock) => Some(Ordering::Less),
+//             (Hand::Scissors, Hand::Paper) => Some(Ordering::Greater),
+//             _ => Some(Ordering::Equal),
+//         }
+//     }
+// }
 
 impl Hand {
     fn points(&self) -> u32 {
@@ -83,12 +81,12 @@ impl GameResult {
     }
 
     fn play(hand1: &Hand, hand2: &Hand) -> GameResult {
-        if *hand1 < *hand2 {
-            GameResult::Win
-        } else if *hand1 > *hand2 {
+        if *hand1 == *hand2 {
+            GameResult::Draw
+        } else if *hand2 == hand1.winner() {
             GameResult::Lose
         } else {
-            GameResult::Draw
+            GameResult::Win
         }
     }
 }

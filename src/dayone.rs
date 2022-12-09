@@ -1,5 +1,3 @@
-use std::cmp::Reverse;
-
 use crate::filereader;
 
 fn bins() -> Vec<u32> {
@@ -17,7 +15,13 @@ fn bins() -> Vec<u32> {
     }
     vec.push(acc);
 
-    vec.sort_by_key(|w| Reverse(*w));
+    let mut other_vec: Vec<u32> = Vec::with_capacity(vec.len());
+    vec.sort();
+
+    for i in (0..vec.len()).rev(){
+        other_vec.push(vec[i]);
+    }
+
 
     vec
 }
