@@ -7,6 +7,8 @@ mod daythree;
 mod daytwo;
 mod dayeight;
 mod daynine;
+mod dayten;
+
 
 
 mod filereader;
@@ -38,6 +40,10 @@ fn main() {
 
     dbg!(daynine::day_9(1));
     dbg!(daynine::day_9(9));
+
+    dbg!(dayten::day_10_1());
+
+    dayten::day_10_2();
 
 
 
