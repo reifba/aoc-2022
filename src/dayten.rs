@@ -17,7 +17,8 @@ impl Operation {
     }
 }
 
-const INDEX_LOCATIONS: [usize; 6] = [20, 60, 100, 140, 180, 220];
+const INDEXED_LOCATIONS: [usize; 6] = [20, 60, 100, 140, 180, 220];
+const LINE_LENGTH: i32 = 40;
 
 fn get_operation_list() -> Vec<Operation> {
     filereader::lines(10)
@@ -27,18 +28,16 @@ fn get_operation_list() -> Vec<Operation> {
         .collect()
 }
 
-fn time_line(ops: &[Operation]) -> Vec<i32> {
+fn time_line(ops: &[Operation], defualt: i32) -> Vec<i32> {
     let mut time_line = Vec::new();
 
     for op in ops {
-        let last: i32 = *time_line.last().unwrap_or(&1);
-        match op {
-            Operation::Noop => time_line.push(last),
-            Operation::Addx(x) => {
-                time_line.push(last);
-                time_line.push(last + x);
-            }
-        };
+        let last: i32 = *time_line.last().unwrap_or(&defualt);
+        time_line.push(last);
+
+        if let Operation::Addx(x) = op {
+            time_line.push(last + x);
+        }
     }
 
     time_line
@@ -47,22 +46,19 @@ fn time_line(ops: &[Operation]) -> Vec<i32> {
 pub fn day_10_1() -> i32 {
     let ops = get_operation_list();
 
-    let time_line = time_line(&ops);
+    let time_line = time_line(&ops, 1);
 
-    let mut acc = 0;
-
-    for location in INDEX_LOCATIONS {
-        acc += time_line[location - 2] * (location as i32);
-    }
-
-    acc
+    INDEXED_LOCATIONS
+        .iter()
+        .map(|x| time_line[*x - 2] * (*x as i32))
+        .sum()
 }
 
 fn print_out(time_line: &[i32], offset: usize) {
-    print!(".");
-    let forty_cycle_iter = (0..40).cycle();
+    print!("#");
+    let forty_cycle_iter = (0..LINE_LENGTH).cycle();
     for (sprite_location, pixel) in time_line.iter().zip(forty_cycle_iter.skip(offset)) {
-        if pixel % 40 == 0 {
+        if pixel % LINE_LENGTH == 0 {
             println!();
         }
         if (*sprite_location - pixel).abs() <= 1 {
@@ -84,7 +80,7 @@ fn print_out(time_line: &[i32], offset: usize) {
 
 pub fn day_10_2() {
     let ops = get_operation_list();
-    let time_line = time_line(&ops);
+    let time_line = time_line(&ops, 1);
 
     print_out(&time_line, 1);
 }
